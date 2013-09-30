@@ -12,7 +12,7 @@
     <web-resource key="subtask-dragger-resources" name="subtask-dragger Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency> 
         <resource type="download" name="subtask-dragger.js" location="/js/subtask-dragger.js"/>       
- 		<context>atl.general</context>
+ 		<context>jira.view.issue</context>
     </web-resource>
     
     <!-- import from the product container -->

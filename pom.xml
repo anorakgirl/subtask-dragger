@@ -5,7 +5,7 @@
     <groupId>uk.co.anorakgirl.jira</groupId>
     <artifactId>subtask-dragger</artifactId>
 
-    <version>0.2-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
 
     <organization>
         <name>anorakgirl</name>
