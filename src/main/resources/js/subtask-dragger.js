@@ -39,9 +39,17 @@ function getCurrentPosition(url) {
 	
 }
 
-AJS.$(document).ready(function() {
+function makeSubtasksSortable()
+{
 	AJS.$("#issuetable tbody").sortable({
 		stop: updatePosition
+	});
+}
+
+
+AJS.$(document).ready(function() {
+	JIRA.bind(JIRA.Events.NEW_CONTENT_ADDED, function (e,context) {
+		makeSubtasksSortable();
 	});
 });
 
