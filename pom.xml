@@ -4,7 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.co.anorakgirl.jira</groupId>
     <artifactId>subtask-dragger</artifactId>
-    <version>0.2</version>
+
+	<version>0.3</version>
+
     <organization>
         <name>anorakgirl</name>
         <url>http://www.anorakgirl.co.uk/</url>
