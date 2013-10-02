@@ -27,6 +27,7 @@ var updatePosition = function(e, ui) {
 	
 	//replace the new position with the one we worked out
 	var newUrl = url.replace(/subTaskSequence=\d*/,"subTaskSequence="+newPos);
+	alert("Moving to " + newPos);
 	
 	//go to this page
 	window.location.href = newUrl;
@@ -34,15 +35,20 @@ var updatePosition = function(e, ui) {
 };
 
 function getCurrentPosition(url) {
-	var params = /.*currentSubTaskSequence=(\d)*&.*/g.exec(url);
+	var params = /.*currentSubTaskSequence=(\d*)&.*/g.exec(url);
 	return params[1];
 	
 }
 
 function makeSubtasksSortable()
 {
+	//Fixes problem with helper position if page has been scrolled	
+	AJS.$("#content").css("position","static");
+	
 	AJS.$("#issuetable tbody").sortable({
-		stop: updatePosition
+		stop: updatePosition,
+		appendTo: "#issuetable",
+		axis: "y"		
 	});
 }
 
