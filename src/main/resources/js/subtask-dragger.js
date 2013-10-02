@@ -27,7 +27,6 @@ var updatePosition = function(e, ui) {
 	
 	//replace the new position with the one we worked out
 	var newUrl = url.replace(/subTaskSequence=\d*/,"subTaskSequence="+newPos);
-	alert("Moving to " + newPos);
 	
 	//go to this page
 	window.location.href = newUrl;
