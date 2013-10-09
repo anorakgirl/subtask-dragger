@@ -4,38 +4,47 @@
 */
 var updatePosition = function(e, ui) {
 	var url = ui.item.find("div.subtask-reorder").children("a").attr("href");
-	var currentPos = getCurrentPosition(url);
-	var newPos = 0;
+	var currentPos = getCurrentPosition(url);	
+	var newPos = currentPos;
 
 	var nextUrl = ui.item.next().find("div.subtask-reorder").children("a").attr("href");
 	var prevUrl = ui.item.prev().find("div.subtask-reorder").children("a").attr("href");	
 
 	//if there is a position below
 	if (nextUrl != null) {	
+		
 		var nextPos = getCurrentPosition(nextUrl);
+		
 		//if we are moving up, use the below index
-		if (nextPos < currentPos) {
+		if (nextPos < (currentPos + 1)) {
 			newPos = nextPos;
-		} else {
+		} else if (nextPos > (currentPos + 1)) {			
 			//use the prev index as we are moving down
 			newPos = getCurrentPosition(prevUrl);			
 		}
 	} else {
+		
 		//we must be moving down
-		newPos = getCurrentPosition(prevUrl);		
+		var prevPos = getCurrentPosition(prevUrl);	
+		if (prevPos < (currentPos - 1)) {		
+			newPos = prevPos;
+		} 				
 	}
+
+	if (currentPos != newPos) {
 	
-	//replace the new position with the one we worked out
-	var newUrl = url.replace(/subTaskSequence=\d*/,"subTaskSequence="+newPos);
+		//replace the new position with the one we worked out
+		var newUrl = url.replace(/subTaskSequence=\d*/,"subTaskSequence="+newPos);
 	
-	//go to this page
-	window.location.href = newUrl;
+		//go to this page
+		window.location.href = newUrl;
+	}
 	
 };
 
 function getCurrentPosition(url) {
 	var params = /.*currentSubTaskSequence=(\d*)&.*/g.exec(url);
-	return params[1];
+	return parseInt(params[1]);
 	
 }
 
@@ -47,7 +56,8 @@ function makeSubtasksSortable()
 	AJS.$("#issuetable tbody").sortable({
 		stop: updatePosition,
 		appendTo: "#issuetable",
-		axis: "y"		
+		axis: "y",
+		delay: 300		
 	});
 }
 
