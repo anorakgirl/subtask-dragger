@@ -57,14 +57,18 @@ function makeSubtasksSortable()
 		stop: updatePosition,
 		appendTo: "#issuetable",
 		axis: "y",
-		delay: 300		
+		delay: 100,
+		handle: '.streorder',
+		cursor: "move"		
 	});
 }
 
 
 AJS.$(document).ready(function() {
-	JIRA.bind(JIRA.Events.NEW_CONTENT_ADDED, function (e,context) {
-		makeSubtasksSortable();
-	});
+	if ( AJS.$("#view-subtasks" ).length) {
+		JIRA.bind(JIRA.Events.NEW_CONTENT_ADDED, function (e,context) {
+			makeSubtasksSortable();
+		});
+	}
 });
 
