@@ -1,71 +1,85 @@
 /*
 * jQuery drag and drop functionality for Jira subtasks
-* Copyright anorakgirl 2013
+* Inspired on version of anorakgirl (https://github.com/anorakgirl/subtask-dragger) with modifications by czerwiu:
+* - reordering subtasks without reloading the page
+* - visual DnD handle
+* - fixed issue with moving subtask to the last position
+* - works with Jira 5.x and 6.x
 */
-var updatePosition = function(e, ui) {
-	var url = ui.item.find("div.subtask-reorder").children("a").attr("href");
-	var currentPos = getCurrentPosition(url);	
-	var newPos = currentPos;
 
-	var nextUrl = ui.item.next().find("div.subtask-reorder").children("a").attr("href");
-	var prevUrl = ui.item.prev().find("div.subtask-reorder").children("a").attr("href");	
+function makeSubtasksSortable() { 
 
-	//if there is a position below
-	if (nextUrl != null) {	
-		
-		var nextPos = getCurrentPosition(nextUrl);
-		
-		//if we are moving up, use the below index
-		if (nextPos < (currentPos + 1)) {
-			newPos = nextPos;
-		} else if (nextPos > (currentPos + 1)) {			
-			//use the prev index as we are moving down
-			newPos = getCurrentPosition(prevUrl);			
-		}
-	} else {
-		
-		//we must be moving down
-		var prevPos = getCurrentPosition(prevUrl);	
-		if (prevPos < (currentPos - 1)) {		
-			newPos = prevPos;
-		} 				
+	var subTasksTbody = jQuery("#issuetable tbody");
+
+	// ignore call if subtasks are already sortable
+	if (subTasksTbody.hasClass("ui-sortable")) {
+		return;
 	}
 
-	if (currentPos != newPos) {
-	
-		//replace the new position with the one we worked out
-		var newUrl = url.replace(/subTaskSequence=\d*/,"subTaskSequence="+newPos);
-	
-		//go to this page
-		window.location.href = newUrl;
-	}
-	
-};
+	//Fixes problem with helper position if page has been scrolled
+	jQuery("#content").css("position","static");
 
-function getCurrentPosition(url) {
-	var params = /.*currentSubTaskSequence=(\d*)&.*/g.exec(url);
-	return parseInt(params[1]);
-	
-}
-
-function makeSubtasksSortable()
-{
-	//Fixes problem with helper position if page has been scrolled	
-	AJS.$("#content").css("position","static");
-	
-	AJS.$("#issuetable tbody").sortable({
+	subTasksTbody.sortable({
+		start: rememberCurrentOrder,
 		stop: updatePosition,
 		appendTo: "#issuetable",
 		axis: "y",
 		delay: 100,
-		handle: '.streorder',
-		cursor: "move"		
+		handle: '.stsequence',
+		cursor: "move"	
 	});
+	// adding nice drag&drop handle
+	jQuery(".stsequence").prepend('<span style="background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAJElEQVQIHWP4//8/w7lzp4HUfwam8+fP/L916yYDCDCCRGAAANedEldyQ5zxAAAAAElFTkSuQmCC);cursor:move;display:inline-block;float:left;height:100%;margin-bottom:-6px;min-height:24px;width:12px;margin-right:10px;"></span>');
+	jQuery(".stsequence div").css("padding","0 40px 0 0");
+
 }
 
+function getCurrentOrder() {
+	order = [];
+	jQuery('#issuetable>tbody').children('tr').each(function(idx,elm) {
+		if(elm.id)order.push(elm.id)
+	});
+	return order;
+}
 
-AJS.$(document).ready(function() {
-	if ( AJS.$("#view-subtasks" ).length) {
+var rememberCurrentOrder = function(e,ui) {
+	subtasksOrder = getCurrentOrder();
+}
+
+var updatePosition = function(e, ui) {
+
+	oldOrder = subtasksOrder;
+	newOrder = getCurrentOrder();
+	
+	for(i=0;i<=newOrder.length;i++) {
+		id = ui.item[0].id;
+		if (id == oldOrder[i]) {
+			currentPos = i;
+		}
+		if (id == newOrder[i]) {
+			newPos = i;
+		} 
+	}
+
+	if (currentPos != newPos) {
+		var url = ui.item.find("div.subtask-reorder").children("a").attr("href");
+		var newUrl = url.replace(/subTaskSequence=\d*/,"subTaskSequence="+newPos);
+		moveSubtaskAction(newUrl);
+	}
+	
+};
+
+function moveSubtaskAction(url) {
+	// creating temp anchor, clicking and removing it
+	jQuery("#issuetable tr:first-child div.subtask-reorder").append('<a id="tempMoveBtn" href="'+url+'" class="icon"><span></span></a>');
+	tmpbtn = jQuery("#tempMoveBtn");
+	tmpbtn[0].click();
+	tmpbtn.remove();
+}
+
+jQuery(function() {
+	if (jQuery("#view-subtasks").length) {
+		makeSubtasksSortable();
 		JIRA.bind(JIRA.Events.NEW_CONTENT_ADDED, function (e,context) {
 			makeSubtasksSortable();
 		});
