@@ -52,13 +52,16 @@ function makeSubtasksSortable()
 {
 	//Fixes problem with helper position if page has been scrolled	
 	AJS.$("#content").css("position","static");
+
+	//Add a new cell to be the grabber target
+	AJS.$("#issuetable .issuerow").prepend("<td class=\"grabber\" style=\"cursor:move;color:#ccc;\">&#8801;</td>");
 	
 	AJS.$("#issuetable tbody").sortable({
 		stop: updatePosition,
 		appendTo: "#issuetable",
 		axis: "y",
 		delay: 100,
-		handle: '.streorder',
+		handle: '.grabber',
 		cursor: "move"		
 	});
 }
