@@ -11,8 +11,8 @@ var updatePosition = function(e, ui) {
 	var prevUrl = ui.item.prev().find("div.subtask-reorder").children("a").attr("href");	
 
 	//if there is a position below
-	if (nextUrl != null) {	
-		
+	if (nextUrl !== undefined) {	
+
 		var nextPos = getCurrentPosition(nextUrl);
 		
 		//if we are moving up, use the below index
@@ -24,11 +24,11 @@ var updatePosition = function(e, ui) {
 		}
 	} else {
 		
-		//we must be moving down
+		//we must be moving to the bottom of the table
 		var prevPos = getCurrentPosition(prevUrl);	
-		if (prevPos < (currentPos - 1)) {		
+		// if (prevPos < (currentPos - 1)) {		
 			newPos = prevPos;
-		} 				
+		// } 				
 	}
 
 	if (currentPos != newPos) {
