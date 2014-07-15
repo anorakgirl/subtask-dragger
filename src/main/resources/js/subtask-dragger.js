@@ -54,7 +54,7 @@ function makeSubtasksSortable()
 	AJS.$("#content").css("position","static");
 
 	//Add a new cell to be the grabber target
-	AJS.$("#issuetable .issuerow").prepend("<td class=\"grabber\" style=\"cursor:move;color:#ccc;\">&#8801;</td>");
+	AJS.$("#issuetable .issuerow").not(":has(\".grabber\")").prepend("<td class=\"grabber\" style=\"cursor:move;color:#ccc;\">&#8801;</td>");
 	
 	AJS.$("#issuetable tbody").sortable({
 		stop: updatePosition,
