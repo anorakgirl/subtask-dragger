@@ -11,8 +11,8 @@ var updatePosition = function(e, ui) {
 	var prevUrl = ui.item.prev().find("div.subtask-reorder").children("a").attr("href");	
 
 	//if there is a position below
-	if (nextUrl != null) {	
-		
+	if (nextUrl !== undefined) {	
+
 		var nextPos = getCurrentPosition(nextUrl);
 		
 		//if we are moving up, use the below index
@@ -24,11 +24,11 @@ var updatePosition = function(e, ui) {
 		}
 	} else {
 		
-		//we must be moving down
+		//we must be moving to the bottom of the table
 		var prevPos = getCurrentPosition(prevUrl);	
-		if (prevPos < (currentPos - 1)) {		
+		// if (prevPos < (currentPos - 1)) {		
 			newPos = prevPos;
-		} 				
+		// } 				
 	}
 
 	if (currentPos != newPos) {
@@ -52,13 +52,16 @@ function makeSubtasksSortable()
 {
 	//Fixes problem with helper position if page has been scrolled	
 	AJS.$("#content").css("position","static");
+
+	//Add a new cell to be the grabber target
+	AJS.$("#issuetable .issuerow").not(":has(\".grabber\")").prepend("<td class=\"grabber\" style=\"cursor:move;color:#ccc;\">&#8801;</td>");
 	
 	AJS.$("#issuetable tbody").sortable({
 		stop: updatePosition,
 		appendTo: "#issuetable",
 		axis: "y",
 		delay: 100,
-		handle: '.streorder',
+		handle: '.grabber',
 		cursor: "move"		
 	});
 }
